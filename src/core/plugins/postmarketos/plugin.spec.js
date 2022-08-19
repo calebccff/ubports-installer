@@ -1,9 +1,8 @@
 const mainEvent = { emit: jest.fn() };
 beforeEach(() => mainEvent.emit.mockReset());
-const fs = require("fs-extra");
-jest.mock("fs-extra", () => ({
-  renameSync: jest.fn(),
-  ensureDir: jest.fn()
+const fs = require("fs/promises");
+jest.mock("fs/promises", () => ({
+  rename: jest.fn()
 }));
 const log = require("../../../lib/log.js");
 jest.mock("../../../lib/log.js");
@@ -78,12 +77,12 @@ describe("postmarketos plugin", () => {
 
       await pmosPlugin.action__rename_unpacked_files({ group, files });
       expect(pmosPlugin.event.emit).toHaveBeenCalledTimes(3);
-      expect(fs.renameSync).toHaveBeenCalledWith(
-        path.join(basepath, "somethingelse.img.xz"),
+      expect(fs.rename).toHaveBeenCalledWith(
+        path.join(basepath, "somethingelse.img"),
         path.join(basepath, "rootfs.img")
       );
-      expect(fs.renameSync).toHaveBeenCalledWith(
-        path.join(basepath, "somethingelse-boot.img.xz"),
+      expect(fs.rename).toHaveBeenCalledWith(
+        path.join(basepath, "somethingelse-boot.img"),
         path.join(basepath, "boot.img")
       );
     });

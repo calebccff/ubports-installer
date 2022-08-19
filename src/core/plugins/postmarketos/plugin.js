@@ -20,11 +20,8 @@
 
 const Plugin = require("../plugin.js");
 const api = require("./api.js");
-const fs = require("fs");
+const fs = require("fs/promises");
 const path = require("path");
-const util = require("util");
-
-const fsRename = util.promisify(fs.rename);
 
 /**
  * postmarketOS plugin
@@ -98,8 +95,8 @@ class PostmarketOSPlugin extends Plugin {
       .find(file => file.path.endsWith("boot.img.xz"))
       .path.replace(/.xz$/, "");
     return Promise.all([
-      fsRename(rootfs_path, path.join(basepath, "rootfs.img")),
-      fsRename(boot_path, path.join(basepath, "boot.img"))
+      fs.rename(rootfs_path, path.join(basepath, "rootfs.img")),
+      fs.rename(boot_path, path.join(basepath, "boot.img"))
     ]);
   }
 
